@@ -1,0 +1,123 @@
+#suite fmod_tests
+#test fmod_test_nan_1
+  ck_assert_ldouble_nan(s21_fmod(S21_NAN, 9.21));
+  ck_assert_ldouble_nan(s21_fmod(S21_NAN, S21_INF));
+  ck_assert_ldouble_nan(s21_fmod(S21_NAN, S21_NAN));
+  ck_assert_ldouble_nan(s21_fmod(9.21, S21_NAN));
+  ck_assert_ldouble_nan(s21_fmod(S21_INF, S21_NAN));
+
+#test fmod_test_nan_1math
+  ck_assert_ldouble_nan(fmodl(S21_NAN, 9.21));
+  ck_assert_ldouble_nan(fmodl(S21_NAN, S21_INF));
+  ck_assert_ldouble_nan(fmodl(S21_NAN, S21_NAN));
+  ck_assert_ldouble_nan(fmodl(9.21, S21_NAN));
+  ck_assert_ldouble_nan(fmodl(S21_INF, S21_NAN));
+
+#test fmod_test_nan_2
+  ck_assert_ldouble_nan(s21_fmod(-9.21, 0));
+  ck_assert_ldouble_nan(s21_fmod(9.21, 0));
+  ck_assert_ldouble_nan(s21_fmod(9.21, -0));
+  ck_assert_ldouble_nan(s21_fmod(0, 0));
+  ck_assert_ldouble_nan(s21_fmod(S21_NAN, 0));
+  ck_assert_ldouble_nan(s21_fmod(S21_NAN, -0));
+  ck_assert_ldouble_nan(s21_fmod(S21_INF, 0));
+  ck_assert_ldouble_nan(s21_fmod(-S21_INF, 0));
+
+#test fmod_test_nan_2math
+  ck_assert_ldouble_nan(fmodl(-9.21, 0));
+  ck_assert_ldouble_nan(fmodl(9.21, 0));
+  ck_assert_ldouble_nan(fmodl(9.21, -0));
+  ck_assert_ldouble_nan(fmodl(0, 0));
+  ck_assert_ldouble_nan(fmodl(S21_NAN, 0));
+  ck_assert_ldouble_nan(fmodl(S21_NAN, -0));
+  ck_assert_ldouble_nan(fmodl(S21_INF, 0));
+  ck_assert_ldouble_nan(fmodl(-S21_INF, 0));
+
+#test fmod_test_nan_3
+  ck_assert_ldouble_nan(s21_fmod(S21_INF, S21_INF));
+  ck_assert_ldouble_nan(s21_fmod(-S21_INF, S21_INF));
+  ck_assert_ldouble_nan(s21_fmod(S21_INF, 1.1));
+  ck_assert_ldouble_nan(s21_fmod(-S21_INF, 1.1));
+  ck_assert_ldouble_nan(s21_fmod(S21_INF, -1.1));
+  ck_assert_ldouble_nan(s21_fmod(-S21_INF, -1.1));
+  ck_assert_ldouble_nan(s21_fmod(S21_INF, 0.00001));
+  ck_assert_ldouble_nan(s21_fmod(-S21_INF, 0.00001));
+
+#test fmod_test_nan_3math
+  ck_assert_ldouble_nan(fmodl(S21_INF, S21_INF));
+  ck_assert_ldouble_nan(fmodl(-S21_INF, S21_INF));
+  ck_assert_ldouble_nan(fmodl(S21_INF, 1.1));
+  ck_assert_ldouble_nan(fmodl(-S21_INF, 1.1));
+  ck_assert_ldouble_nan(fmodl(S21_INF, -1.1));
+  ck_assert_ldouble_nan(fmodl(-S21_INF, -1.1));
+  ck_assert_ldouble_nan(fmodl(S21_INF, 0.00001));
+  ck_assert_ldouble_nan(fmodl(-S21_INF, 0.00001));
+
+#test fmod_test_zero_1
+  ck_assert_ldouble_eq(s21_fmod(0, 0.00001), fmodl(0, 0.00001));
+
+#test fmod_test_zero_2
+  ck_assert_ldouble_eq(s21_fmod(0, -0.00001), fmodl(0, -0.00001));
+
+#test fmod_test_zero_3
+  ck_assert_ldouble_eq(s21_fmod(0, 999999999999999.9), fmodl(0, 999999999999999.9));
+
+#test fmod_test_zero_4
+  ck_assert_ldouble_eq(s21_fmod(0, -999999999999999.9), fmodl(0, -999999999999999.9));
+
+#test fmod_test_zero_5
+  ck_assert_ldouble_eq(s21_fmod(0, S21_INF), fmodl(0, S21_INF));
+
+#test fmod_test_zero_6
+  ck_assert_ldouble_eq(s21_fmod(0, -S21_INF), fmodl(0, -S21_INF));
+
+#test fmod_test_infinity_1
+  ck_assert_ldouble_eq(s21_fmod(1.0, S21_INF), fmodl(1.0, S21_INF));
+
+#test fmod_test_infinity_2
+  ck_assert_ldouble_eq(s21_fmod(1.0, -S21_INF), fmodl(1.0, -S21_INF));
+
+#test fmod_test_infinity_3
+  ck_assert_ldouble_eq(s21_fmod(-1.0, S21_INF), fmodl(-1.0, S21_INF));
+
+#test fmod_test_infinity_4
+  ck_assert_ldouble_eq(s21_fmod(-1.0, -S21_INF), fmodl(-1.0, -S21_INF));
+
+#test fmod_test_infinity_5
+  ck_assert_ldouble_eq(s21_fmod(0.0000001, S21_INF), fmodl(0.0000001, S21_INF));
+
+#test fmod_test_infinity_6
+  ck_assert_ldouble_eq(s21_fmod(0.0000001, -S21_INF), fmodl(0.0000001, -S21_INF));
+
+#test fmod_test_1
+  ck_assert_ldouble_eq_tol(s21_fmod(-9111111111.22222221, 0.000007), fmodl(-9111111111.22222221, 0.000007), S21_EPS);
+
+#test fmod_test_2
+  ck_assert_ldouble_eq_tol(s21_fmod(9111111111.22222221, -0.000007), fmodl(9111111111.22222221, -0.000007), S21_EPS);
+
+#test fmod_test_3
+  ck_assert_ldouble_eq_tol(s21_fmod(9.21, 0.000007), fmodl(9.21, 0.000007), S21_EPS);
+
+#test fmod_test_4
+  ck_assert_ldouble_eq_tol(s21_fmod(-9.21, -3.7), fmodl(-9.21, -3.7), S21_EPS);
+
+#test fmod_test_5
+  ck_assert_ldouble_eq_tol(s21_fmod(-9.21, -0.000007), fmodl(-9.21, -0.000007), S21_EPS);
+
+#test fmod_test_6
+  ck_assert_ldouble_eq_tol(s21_fmod(9999999999999999.999999, 9999999999999999.999999), fmodl(9999999999999999.999999, 9999999999999999.999999), S21_EPS);
+
+#test fmod_test_7
+  ck_assert_ldouble_eq_tol(s21_fmod(9999999999999999.999999, -9999999999999999.999999), fmodl(9999999999999999.999999, -9999999999999999.999999), S21_EPS);
+
+#test fmod_test_8
+  ck_assert_ldouble_eq_tol(s21_fmod(DBL_MAX, DBL_MIN), fmodl(DBL_MAX, DBL_MIN), S21_EPS);
+
+#test fmod_test_9
+  ck_assert_ldouble_eq_tol(s21_fmod(-DBL_MAX, -DBL_MIN), fmodl(-DBL_MAX, -DBL_MIN), S21_EPS);
+
+#test fmod_test_10
+  ck_assert_ldouble_eq_tol(s21_fmod(-DBL_MAX, DBL_MIN), fmodl(-DBL_MAX, DBL_MIN), S21_EPS);
+
+#test fmod_test_11
+  ck_assert_ldouble_eq_tol(s21_fmod(DBL_MAX, -DBL_MIN), fmodl(DBL_MAX, -DBL_MIN), S21_EPS);

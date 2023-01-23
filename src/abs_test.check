@@ -1,0 +1,16 @@
+#suite abs_tests
+#test abs_test1
+  ck_assert_int_eq(s21_abs(0), abs(0));
+  ck_assert_int_eq(s21_abs(INT_MAX), abs(INT_MAX));
+  ck_assert_int_eq(s21_abs(INT_MIN), abs(INT_MIN));
+  ck_assert_int_eq(s21_abs(5), abs(5));
+
+#test abs_test2 
+  ck_assert_int_eq(s21_abs(-1), abs(-1));
+  ck_assert_int_eq(s21_abs(-0022), abs(-0022));
+  ck_assert_int_eq(s21_abs(-0), abs(-0));
+  ck_assert_int_eq(s21_abs(-1234), abs(-1234));
+
+#test abs_test3
+  ck_assert_int_eq(s21_abs(64386876), abs(64386876));
+  ck_assert_int_eq(s21_abs(-0101010), abs(-0101010));

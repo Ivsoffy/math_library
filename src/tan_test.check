@@ -1,0 +1,37 @@
+#suite tan_tests
+#test tan_test_1
+  for (double i = -50.0; i < 50.1; i += 0.1) {
+    ck_assert_ldouble_eq_tol(s21_tan(i), tanl(i), S21_EPS);
+  }
+#test tan_test_2
+  ck_assert_ldouble_eq_tol(s21_tan(0), tanl(0), S21_EPS);
+
+#test tan_test_3
+  ck_assert_ldouble_eq_tol(s21_tan(432424.1242423), tanl(432424.1242423), S21_EPS);
+
+#test tan_test_4
+  ck_assert_ldouble_eq_tol(s21_tan(-332432.4252), tanl(-332432.4252), S21_EPS);
+
+#test tan_test_5
+  ck_assert_ldouble_eq_tol(s21_tan(0), tanl(0), S21_EPS);
+
+#test tan_test_6
+  ck_assert_ldouble_eq_tol(s21_tan(1), tanl(1), S21_EPS);
+
+#test tan_test_7
+  ck_assert_ldouble_eq_tol(s21_tan(-1), tanl(-1), S21_EPS);
+
+#test tan_test_8
+  ck_assert_ldouble_nan(s21_tan(S21_INF));
+  ck_assert_ldouble_nan(tanl(S21_INF));
+
+#test tan_test_9
+  ck_assert_ldouble_nan(s21_tan(-S21_INF));
+  ck_assert_ldouble_nan(tanl(-S21_INF));
+
+#test tan_test_10
+  ck_assert_ldouble_nan(s21_tan(S21_NAN));
+  ck_assert_ldouble_nan(tanl(S21_NAN));
+
+#test tan_test_11
+  ck_assert_ldouble_eq(s21_tan(DBL_MIN), tanl(DBL_MIN));

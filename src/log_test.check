@@ -1,0 +1,27 @@
+#suite log_tests
+#test log_test_nan
+  ck_assert_ldouble_nan(s21_log(S21_NAN));
+  ck_assert_ldouble_nan(s21_log(-S21_INF));
+  ck_assert_ldouble_nan(s21_log(-DBL_MIN));
+  ck_assert_ldouble_nan(s21_log(-DBL_MAX));
+  ck_assert_ldouble_nan(s21_log(-3.000001));
+  ck_assert_ldouble_nan(s21_log(-0.000001));
+
+#test log_test_inf
+  ck_assert_ldouble_eq(s21_log(S21_INF), logl(S21_INF));
+  ck_assert_ldouble_eq(s21_log(0.0), logl(0.0));
+  ck_assert_ldouble_eq(s21_log(-0.0), logl(-0.0));
+
+#test log_test_small
+  ck_assert_ldouble_eq_tol(s21_log(DBL_MIN), logl(DBL_MIN), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_log(0.666666), logl(0.666666), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_log(0.000001), logl(0.000001), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_log(0.000000001), logl(0.000000001), S21_EPS);
+
+#test log_test_big
+  ck_assert_ldouble_eq_tol(s21_log(DBL_MAX), logl(DBL_MAX), S21_EPS);
+  ck_assert_ldouble_eq(s21_log(1.0), logl(1.0));
+  ck_assert_ldouble_eq_tol(s21_log(2.0), logl(2.0), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_log(22.000001), logl(22.000001), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_log(123456789.666666), logl(123456789.666666), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_log(6.333333e10), logl(6.333333e10), S21_EPS);

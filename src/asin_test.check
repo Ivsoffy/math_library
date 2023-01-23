@@ -1,0 +1,51 @@
+#suite asin_tests
+#test asin_test_1
+  ck_assert_ldouble_eq_tol(s21_asin(0.0), asinl(0.0), S21_EPS);
+
+#test asin_test_2
+  ck_assert_ldouble_eq_tol(s21_asin(-0.0), asinl(-0.0), S21_EPS);
+
+#test asin_test_3
+  ck_assert_ldouble_eq_tol(s21_asin(-1), asinl(-1), S21_EPS);
+
+#test asin_test_4
+  ck_assert_ldouble_eq_tol(s21_asin(1), asinl(1), S21_EPS);
+
+#test asin_test_5
+  ck_assert_ldouble_nan(s21_asin(S21_INF));
+  ck_assert_ldouble_nan(asinl(S21_INF));
+
+#test asin_test_6
+  ck_assert_ldouble_nan(s21_asin(-S21_INF));
+  ck_assert_ldouble_nan(asinl(-S21_INF));
+
+#test asin_test_7
+  ck_assert_ldouble_nan(s21_asin(S21_NAN));
+  ck_assert_ldouble_nan(asinl(S21_NAN));
+
+#test asin_test_8
+  ck_assert_ldouble_nan(s21_asin(DBL_MAX));
+  ck_assert_ldouble_nan(asinl(DBL_MAX));
+
+#test asin_test_9
+  ck_assert_ldouble_eq_tol(s21_asin(DBL_MIN), asinl(DBL_MIN), S21_EPS);
+  
+#test asin_test_10
+  ck_assert_ldouble_nan(s21_asin(42352));
+  ck_assert_ldouble_nan(asinl(42352));
+
+#test asin_test_11
+  ck_assert_ldouble_nan(s21_asin(-35363));
+  ck_assert_ldouble_nan(asinl(-35363));
+
+#test asin_test_12
+  ck_assert_ldouble_eq_tol(s21_asin(0.666666), asinl(0.666666), S21_EPS);
+
+#test asin_test_13
+  ck_assert_ldouble_eq_tol(s21_asin(-0.333333), asinl(-0.333333), S21_EPS);
+
+#test asin_test_14
+  ck_assert_ldouble_eq_tol(s21_asin(0.999999), asinl(0.999999), S21_EPS);
+
+#test asin_test_15
+  ck_assert_ldouble_eq_tol(s21_asin(-0.888), asinl(-0.888), S21_EPS);
