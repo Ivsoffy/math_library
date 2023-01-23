@@ -1,6 +1,7 @@
 #include "s21_math.h"
 
 #include <stdio.h>
+#include <float.h>
 
 int s21_abs(int x) {
   if (x < 0) {
@@ -234,6 +235,10 @@ long double s21_exp(double x) {
     rv = S21_INF;
   } else if (x == -S21_INF) {
     rv = 0;
+  } else if (x > LDBL_MAX_10_EXP * 2.3) {
+    rv = S21_INF;
+  } else if (x < LDBL_MIN_10_EXP * 2.3) {
+    rv = 0;
   } else {
     long double element = 1;
     for (int i = 1; i < 100000; ++i) {
@@ -261,8 +266,12 @@ long double s21_floor(double x) {
     int_x = -S21_INF;
   } else if (s21_is_nan(x)) {
     int_x = S21_NAN;
-  } else if ((s21_fabs(int_x) > 0.) && (x != int_x) && x < 0) {
-    int_x = int_x - 1;
+  } else if ((x != int_x) && x < 0) {
+    if (x > -1) {
+      int_x = -1;
+    } else {
+      int_x = int_x - 1;
+    }
   }
   return int_x;
 }
