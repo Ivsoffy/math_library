@@ -339,7 +339,11 @@ long double s21_exp(double x) {
       element *= x;
       element /= i;
     }
+    if (rv != 0) {
     rv *= int_power(S21_EXP, count);
+    } else {
+      rv = int_power(S21_EXP, count);
+    }
   }
   return rv;
 }
