@@ -219,120 +219,84 @@ long double s21_log(double x) {
   return rv;
 }
 
-// long double s21_pow(double base, double exp) {
-//   long double rv = 0;
-//   if (exp == 0 || base == 1 || (base == -1 && (s21_fmod(exp, 2) == 0))) {
-//     rv = 1;
-//   } else if (base == -1 && (s21_fmod(exp, 2) != 0)) {
-//     rv = -1;
-//   } else {
-//     long double log_base = s21_log(base);
-//     long double arg = log_base * exp;
-//     rv = s21_exp(arg);
-//     if (base == 0) {
-//       rv = 0;
-//     }
-//   } 
-//   return rv;
-// }
-
 long double s21_pow(double base, double exp) {
   long double rv = 0;
-  int exp_type = 0;
+  int parity = 0;
   if (s21_fmod(exp, 1) == 0) {
-    //exp_type = (s21_fmod(exp, 2) == 0) ? 1 : -1;
     if (s21_fmod(exp, 2) == 0) {
-      exp_type = 1;
+      parity = 1;
     } else {
-      exp_type = -1;
+      parity = -1;
     }
   }
-  // 1 - exp чётное
-  // -1 - exp нечётное
-  // 0 - не целое
-
-
   if (base == 1.0 || exp == 0.0) {
     rv = 1.0;
   } else if (s21_is_nan(base) || s21_is_nan(exp)) {
     rv = S21_NAN;
   } else if ((1 / base) == -S21_INF) {
-    //rv = (exp < 0) ? ((exp_type == -1) ? -1 : 1) * S21_INF
-    //                : ((exp_type == -1) ? -1 : 1) * 0.0;
     if (exp < 0) {
-      if (exp_type == -1) {
+      if (parity == -1) {
         rv = -S21_INF;
       } else {
         rv = S21_INF;
       }
     } else {
-      if (exp_type == -1) {
+      if (parity == -1) {
         rv = -1 * 0.0;
       } else {
         rv = 1 * 0.0;
       }
     }
   } else if (base == 0.0) {
-    //rv = (exp < 0) ? S21_INF : 0.0;
     if (exp < 0) {
       rv = S21_INF;
     } else {
       rv = 0;
     }
-  } else if (base == -1.0 && exp != S21_INF) {
-    // rv = (exp_type == 0) ? S21_NAN : exp_type;
-    if (exp == DBL_MAX) {
+  } else if (base == -1.0 && exp != S21_INF && exp != -S21_INF) {
+    if (exp >= DBL_MAX) {
       rv = 1;
-    } else if (exp_type == 0) {
+    } else if (parity == 0) {
       rv = S21_NAN;
     } else {
-        rv = exp_type;
+        rv = parity;
     }
   } else if (base == -1.0 && (exp == S21_INF || exp == -S21_INF)) {
     rv = 1;
   } else if (base == S21_INF) {
-    //rv = (exp > 0) ? S21_INF : 0;
     if (exp > 0) {
       rv = S21_INF;
     } else {
       rv = 0;
     }
   } else if (base == -S21_INF) {
-    // rv = (exp > 0) ? ((exp_type == -1) ? -1 : 1) * S21_INF
-    //                 : ((exp_type == -1) ? -1 : 1) * 0.0;
     if (exp > 0) {
-      if (exp_type == -1) {
+      if (parity == -1) {
         rv = -S21_INF;
       } else {
         rv = S21_INF;
       }
     } else {
-      if (exp_type == -1) {
+      if (parity == -1) {
         rv = -1 * 0.0;
       } else {
         rv = 1 * 0.0;
       }
     }
   } else if (exp == S21_INF) {
-    // rv = (s21_fabs(base) > 1) ? S21_INF : 0.0;
     if (s21_fabs(base) > 1) {
       rv = S21_INF;
     } else {
       rv = 0;
     }
   } else if (exp == -S21_INF) {
-    //rv = (s21_fabs(base) < 1) ? S21_INF : 0.0;
     if (s21_fabs(base) < 1) {
       rv = S21_INF;
     } else {
       rv = 0.0;
     }
   } else if (base < 0) {
-    // rv = (exp_type == 0) ? S21_NAN
-    //                       : ((s21_fabs(exp) < LLONG_MAX)
-    //                              ? integer_pow(base, (long long int)exp)
-    //                              : exp_type * powexp(s21_fabs(base), exp));
-    if (exp_type == 0) {
+    if (parity == 0) {
       rv = S21_NAN;
     } else {
       if (s21_fabs(exp) < LLONG_MAX) {
@@ -341,14 +305,11 @@ long double s21_pow(double base, double exp) {
         base = -base;
         long double log_base = s21_log(base);
         long double arg = log_base * exp;
-        rv = exp_type * s21_exp(arg);
+        rv = parity * s21_exp(arg);
       }
     }
   } else {
-    // rv = (exp_type != 0 && s21_fabs(exp) < LLONG_MAX)
-    //           ? integer_pow(base, (long long int)exp)
-    //           : powexp(base, exp);
-    if (exp_type != 0 && s21_fabs(exp) < LLONG_MAX) {
+    if (parity != 0 && s21_fabs(exp) < LLONG_MAX) {
       rv = int_power(base, (long long int)exp);
     } else {
       long double log_base = s21_log(base);
@@ -386,7 +347,7 @@ long double s21_exp(double x) {
 long double int_power(long double base, long long int exp) {
   long double rv = 1;
   int sign = 0;
-  if (base < 0) {
+  if (exp < 0) {
     exp = -exp;
     sign = 1;
   }
@@ -403,7 +364,11 @@ long double int_power(long double base, long long int exp) {
 
 long double s21_sqrt(double x) {
   long double rv = 0;
-  rv = s21_pow(x, 0.5);
+  if (x < 0) {
+    rv = S21_NAN;
+  } else {
+    rv = s21_pow(x, 0.5);
+  }
   return rv;
 }
 
