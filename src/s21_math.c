@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <float.h>
+#include <limits.h>
 
 int s21_abs(int x) {
   if (x < 0) {
@@ -187,44 +188,173 @@ long double s21_tan(double x) {
 
 long double s21_log(double x) {
   long double rv = 0;
-  if (x == S21_INF) {
-    rv = S21_INF;
+  if (s21_is_nan(x)) {
+    rv = x;
+  } else if (x == S21_INF) {
+    rv = x;
+  } else if (x == -S21_INF) {
+    rv = S21_NAN;
+  } else if (x == 0) {
+    rv = -S21_INF;
   } else if (x < 0) {
     rv = S21_NAN;
-  } else if (x <= 1) {
-    x -= 1;
-    long double element = x;
-    long double denominator = 1;
-    for (int i = 0; i < 500; ++i) {
-      rv += element;
-      element *= -1;
-      element *= x;
-      denominator += 1;
-      element /= denominator;
-      element *= denominator - 1;
+  } else if (x > 0) {
+    long double count_exp = 0;
+    while (x / S21_EXP > 1) {
+      x /= S21_EXP;
+      count_exp += 1; 
     }
-  } else {
     long double y = (1 - x) / (1 + x);
     long double element = -2 * y;
     long double denominator = 1;
-    for (int i = 0; i < 10000; ++i) {
+    for (int i = 0; i < 500; ++i) {
       rv += element;
       element *= y * y;
       denominator += 2;
       element /= denominator;
       element *= denominator - 2;
     }
+    rv += count_exp;
   }
   return rv;
 }
 
+// long double s21_pow(double base, double exp) {
+//   long double rv = 0;
+//   if (exp == 0 || base == 1 || (base == -1 && (s21_fmod(exp, 2) == 0))) {
+//     rv = 1;
+//   } else if (base == -1 && (s21_fmod(exp, 2) != 0)) {
+//     rv = -1;
+//   } else {
+//     long double log_base = s21_log(base);
+//     long double arg = log_base * exp;
+//     rv = s21_exp(arg);
+//     if (base == 0) {
+//       rv = 0;
+//     }
+//   } 
+//   return rv;
+// }
+
 long double s21_pow(double base, double exp) {
   long double rv = 0;
-  long double log_base = s21_log(base);
-  long double arg = log_base * exp;
-  rv = s21_exp(arg);
-  if (base == 0) {
-    rv = 0;
+  int exp_type = 0;
+  if (s21_fmod(exp, 1) == 0) {
+    //exp_type = (s21_fmod(exp, 2) == 0) ? 1 : -1;
+    if (s21_fmod(exp, 2) == 0) {
+      exp_type = 1;
+    } else {
+      exp_type = -1;
+    }
+  }
+  // 1 - exp чётное
+  // -1 - exp нечётное
+  // 0 - не целое
+
+
+  if (base == 1.0 || exp == 0.0) {
+    rv = 1.0;
+  } else if (s21_is_nan(base) || s21_is_nan(exp)) {
+    rv = S21_NAN;
+  } else if ((1 / base) == -S21_INF) {
+    //rv = (exp < 0) ? ((exp_type == -1) ? -1 : 1) * S21_INF
+    //                : ((exp_type == -1) ? -1 : 1) * 0.0;
+    if (exp < 0) {
+      if (exp_type == -1) {
+        rv = -S21_INF;
+      } else {
+        rv = S21_INF;
+      }
+    } else {
+      if (exp_type == -1) {
+        rv = -1 * 0.0;
+      } else {
+        rv = 1 * 0.0;
+      }
+    }
+  } else if (base == 0.0) {
+    //rv = (exp < 0) ? S21_INF : 0.0;
+    if (exp < 0) {
+      rv = S21_INF;
+    } else {
+      rv = 0;
+    }
+  } else if (base == -1.0 && exp != S21_INF) {
+    // rv = (exp_type == 0) ? S21_NAN : exp_type;
+    if (exp == DBL_MAX) {
+      rv = 1;
+    } else if (exp_type == 0) {
+      rv = S21_NAN;
+    } else {
+        rv = exp_type;
+    }
+  } else if (base == -1.0 && (exp == S21_INF || exp == -S21_INF)) {
+    rv = 1;
+  } else if (base == S21_INF) {
+    //rv = (exp > 0) ? S21_INF : 0;
+    if (exp > 0) {
+      rv = S21_INF;
+    } else {
+      rv = 0;
+    }
+  } else if (base == -S21_INF) {
+    // rv = (exp > 0) ? ((exp_type == -1) ? -1 : 1) * S21_INF
+    //                 : ((exp_type == -1) ? -1 : 1) * 0.0;
+    if (exp > 0) {
+      if (exp_type == -1) {
+        rv = -S21_INF;
+      } else {
+        rv = S21_INF;
+      }
+    } else {
+      if (exp_type == -1) {
+        rv = -1 * 0.0;
+      } else {
+        rv = 1 * 0.0;
+      }
+    }
+  } else if (exp == S21_INF) {
+    // rv = (s21_fabs(base) > 1) ? S21_INF : 0.0;
+    if (s21_fabs(base) > 1) {
+      rv = S21_INF;
+    } else {
+      rv = 0;
+    }
+  } else if (exp == -S21_INF) {
+    //rv = (s21_fabs(base) < 1) ? S21_INF : 0.0;
+    if (s21_fabs(base) < 1) {
+      rv = S21_INF;
+    } else {
+      rv = 0.0;
+    }
+  } else if (base < 0) {
+    // rv = (exp_type == 0) ? S21_NAN
+    //                       : ((s21_fabs(exp) < LLONG_MAX)
+    //                              ? integer_pow(base, (long long int)exp)
+    //                              : exp_type * powexp(s21_fabs(base), exp));
+    if (exp_type == 0) {
+      rv = S21_NAN;
+    } else {
+      if (s21_fabs(exp) < LLONG_MAX) {
+        int_power(base, (long long int)exp);
+      } else {
+        base = -base;
+        long double log_base = s21_log(base);
+        long double arg = log_base * exp;
+        rv = exp_type * s21_exp(arg);
+      }
+    }
+  } else {
+    // rv = (exp_type != 0 && s21_fabs(exp) < LLONG_MAX)
+    //           ? integer_pow(base, (long long int)exp)
+    //           : powexp(base, exp);
+    if (exp_type != 0 && s21_fabs(exp) < LLONG_MAX) {
+      rv = int_power(base, (long long int)exp);
+    } else {
+      long double log_base = s21_log(base);
+      long double arg = log_base * exp;
+      rv = s21_exp(arg);
+    }
   }
   return rv;
 }
@@ -240,12 +370,33 @@ long double s21_exp(double x) {
   } else if (x < LDBL_MIN_10_EXP * 2.3) {
     rv = 0;
   } else {
+    long long int count = s21_floor(x);
+    x = x - (long double)count;
     long double element = 1;
-    for (int i = 1; i < 100000; ++i) {
+    for (int i = 1; i < 300; ++i) {
       rv += element;
       element *= x;
       element /= i;
     }
+    rv *= int_power(S21_EXP, count);
+  }
+  return rv;
+}
+
+long double int_power(long double base, long long int exp) {
+  long double rv = 1;
+  int sign = 0;
+  if (base < 0) {
+    exp = -exp;
+    sign = 1;
+  }
+  while(exp != 0) {
+    if (exp & 1) rv *= base;
+    base *= base;
+    exp >>= 1;
+  }
+  if (sign) {
+    rv = 1.0 / rv;
   }
   return rv;
 }
@@ -275,42 +426,25 @@ long double s21_floor(double x) {
   }
   return int_x;
 }
-
 long double s21_fmod(double x, double y) {
   long double rv = 0;
-  long double copy_x = x;
-  long double copy_y = y;
-  long double count = 0;
-  if (y == 0 || s21_is_nan(x) || s21_is_nan(y)) {
+  if (s21_is_nan(x) || s21_is_nan(y) || x == S21_INF || x == -S21_INF || y == 0) {
     rv = S21_NAN;
-  } else if (x == y) {
-    copy_x = 0;
-  } else if (x == 0) {
+  } else if (y == S21_INF || y == -S21_INF) {
+    rv = x;
+  } else if (x == 0 && y != 0) {
     rv = 0;
-  } else if (x > 0 && y > 0) {
-    while (x - y > 0) {
-      x -= y;
-      count++;
+  } else {
+    rv = (long double) x / (long double) y;
+    if (rv > 0) {
+      rv = s21_floor(rv);
+    } else {
+      rv = s21_ceil(rv);
     }
-  } else if (x < 0 && y > 0) {
-    x = -x;
-    while (x - y > 0) {
-      x -= y;
-      count++;
-    }
-    count *= -1;
-  } else if (y < 0 && x > 0) {
-    y = -y;
-    while (x - y > 0) {
-      x -= y;
-      count++;
-    }
-    count *= -1;
-  }
-  if (!s21_is_nan(rv)) {
-    rv = copy_x - count * copy_y;
+    rv = x - y * rv;
   }
   return rv;
 }
+
 
 int s21_is_nan(double x) { return x != x; }
