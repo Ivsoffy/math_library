@@ -2,8 +2,6 @@
 #define TAN_PIBY2 16331239353195370
 #define S21_INF 1.0 / 0.0
 #define S21_NAN 0.0 / 0.0
-#define S21_EPS 1e-6
-#define S21_EPSL 1e-9
 #define S21_EXP 2.718281828459045235360287471352
 
 int s21_abs(int x);

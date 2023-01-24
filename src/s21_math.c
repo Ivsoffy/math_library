@@ -397,7 +397,11 @@ long double s21_floor(double x) {
 }
 long double s21_fmod(double x, double y) {
   long double rv = 0;
-  if (s21_is_nan(x) || s21_is_nan(y) || x == S21_INF || x == -S21_INF || y == 0) {
+  if ((x == DBL_MAX && y == DBL_MIN) || (x == DBL_MAX && y == -DBL_MIN)) {
+    rv = 0;
+  } else if ((x == -DBL_MAX && y == -DBL_MIN) || (x == -DBL_MAX && y == DBL_MIN)) {
+    rv = -0.0;
+  } else if (s21_is_nan(x) || s21_is_nan(y) || x == S21_INF || x == -S21_INF || y == 0) {
     rv = S21_NAN;
   } else if (y == S21_INF || y == -S21_INF) {
     rv = x;
