@@ -1,8 +1,8 @@
 #include "s21_math.h"
 
-#include <stdio.h>
 #include <float.h>
 #include <limits.h>
+#include <stdio.h>
 
 int s21_abs(int x) {
   if (x < 0) {
@@ -202,7 +202,7 @@ long double s21_log(double x) {
     long double count_exp = 0;
     while (x / S21_EXP > 1) {
       x /= S21_EXP;
-      count_exp += 1; 
+      count_exp += 1;
     }
     long double y = (1 - x) / (1 + x);
     long double element = -2 * y;
@@ -259,7 +259,7 @@ long double s21_pow(double base, double exp) {
     } else if (parity == 0) {
       rv = S21_NAN;
     } else {
-        rv = parity;
+      rv = parity;
     }
   } else if (base == -1.0 && (exp == S21_INF || exp == -S21_INF)) {
     rv = 1;
@@ -322,13 +322,17 @@ long double s21_pow(double base, double exp) {
 
 long double s21_exp(double x) {
   long double rv = 0;
-  if (x == S21_INF) {
+  if (x == 0) {
+    rv = 1;
+  } else if (s21_is_nan(x)) {
+    rv = S21_NAN;
+  } else if (x == S21_INF) {
     rv = S21_INF;
   } else if (x == -S21_INF) {
     rv = 0;
-  } else if (x > LDBL_MAX_10_EXP * 2.3) {
+  } else if (x > 710) {
     rv = S21_INF;
-  } else if (x < LDBL_MIN_10_EXP * 2.3) {
+  } else if (x < -710) {
     rv = 0;
   } else {
     long long int count = s21_floor(x);
@@ -340,7 +344,7 @@ long double s21_exp(double x) {
       element /= i;
     }
     if (rv != 0) {
-    rv *= int_power(S21_EXP, count);
+      rv *= int_power(S21_EXP, count);
     } else {
       rv = int_power(S21_EXP, count);
     }
@@ -355,7 +359,7 @@ long double int_power(long double base, long long int exp) {
     exp = -exp;
     sign = 1;
   }
-  while(exp != 0) {
+  while (exp != 0) {
     if (exp & 1) rv *= base;
     base *= base;
     exp >>= 1;
@@ -399,16 +403,18 @@ long double s21_fmod(double x, double y) {
   long double rv = 0;
   if ((x == DBL_MAX && y == DBL_MIN) || (x == DBL_MAX && y == -DBL_MIN)) {
     rv = 0;
-  } else if ((x == -DBL_MAX && y == -DBL_MIN) || (x == -DBL_MAX && y == DBL_MIN)) {
+  } else if ((x == -DBL_MAX && y == -DBL_MIN) ||
+             (x == -DBL_MAX && y == DBL_MIN)) {
     rv = -0.0;
-  } else if (s21_is_nan(x) || s21_is_nan(y) || x == S21_INF || x == -S21_INF || y == 0) {
+  } else if (s21_is_nan(x) || s21_is_nan(y) || x == S21_INF || x == -S21_INF ||
+             y == 0) {
     rv = S21_NAN;
   } else if (y == S21_INF || y == -S21_INF) {
     rv = x;
   } else if (x == 0 && y != 0) {
     rv = 0;
   } else {
-    rv = (long double) x / (long double) y;
+    rv = x / y;
     if (rv > 0) {
       rv = s21_floor(rv);
     } else {
@@ -418,6 +424,5 @@ long double s21_fmod(double x, double y) {
   }
   return rv;
 }
-
 
 int s21_is_nan(double x) { return x != x; }
